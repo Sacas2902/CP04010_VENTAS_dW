@@ -1,51 +1,51 @@
-﻿<?xml version="1.0"?>
+<?xml version="1.0"?>
 <DTS:Executable xmlns:DTS="www.microsoft.com/SqlServer/Dts"
   DTS:refId="Package"
-  DTS:CreationDate="8/10/2025 1:53:00 AM"
+  DTS:CreationDate="8/10/2025 1:54:24 AM"
   DTS:CreationName="Microsoft.Package"
   DTS:CreatorComputerName="DESKTOP-EA2Q770"
   DTS:CreatorName="DESKTOP-EA2Q770\SC"
-  DTS:DTSID="{A5782869-71EE-4247-8987-456F59BFD24C}"
+  DTS:DTSID="{F503BAE6-760D-4CE9-8826-F9C3EE4C84E5}"
   DTS:ExecutableType="Microsoft.Package"
   DTS:LastModifiedProductVersion="16.0.5685.2"
   DTS:LocaleID="17418"
   DTS:ObjectName="Package1"
   DTS:PackageType="5"
-  DTS:VersionBuild="3"
-  DTS:VersionGUID="{B86B956B-2A62-4537-A2E1-6F528A6A964C}">
+  DTS:VersionBuild="2"
+  DTS:VersionGUID="{E731AC3C-F22F-4510-8879-813E0EBB0DC3}">
   <DTS:Property
     DTS:Name="PackageFormatVersion">8</DTS:Property>
   <DTS:ConnectionManagers>
     <DTS:ConnectionManager
       DTS:refId="Package.ConnectionManagers[localhost.SalesDW]"
       DTS:CreationName="OLEDB"
-      DTS:DTSID="{4662B4FD-23F6-4EA7-B8CB-363EBB6B3C0E}"
+      DTS:DTSID="{C1778B0A-8C8E-4276-8E4D-DB09F05EA960}"
       DTS:ObjectName="localhost.SalesDW">
       <DTS:ObjectData>
         <DTS:ConnectionManager
           DTS:ConnectRetryCount="1"
           DTS:ConnectRetryInterval="5"
-          DTS:ConnectionString="Data Source=localhost;Initial Catalog=SalesDW;Provider=SQLNCLI11.1;Integrated Security=SSPI;Application Name=SSIS-Package1-{4662B4FD-23F6-4EA7-B8CB-363EBB6B3C0E}localhost.SalesDW;Auto Translate=False;" />
+          DTS:ConnectionString="Data Source=localhost;Initial Catalog=SalesDW;Provider=SQLNCLI11.1;Integrated Security=SSPI;Application Name=SSIS-Package1-{C1778B0A-8C8E-4276-8E4D-DB09F05EA960}localhost.SalesDW;Auto Translate=False;" />
       </DTS:ObjectData>
     </DTS:ConnectionManager>
   </DTS:ConnectionManagers>
   <DTS:Variables />
   <DTS:Executables>
     <DTS:Executable
-      DTS:refId="Package\Cargar_stg_Ventas"
+      DTS:refId="Package\Cargar_stg_Regiones"
       DTS:CreationName="Microsoft.ExecuteSQLTask"
-      DTS:Description="Cargar_stg_Ventas"
-      DTS:DTSID="{8eeec312-fbf6-471a-9392-4d98e294d86b}"
+      DTS:Description="Cargar_stg_Regiones"
+      DTS:DTSID="{78329de3-51bd-4634-93f6-2e011e98e92a}"
       DTS:ExecutableType="Microsoft.ExecuteSQLTask"
       DTS:LocaleID="-1"
-      DTS:ObjectName="Cargar_stg_Ventas"
+      DTS:ObjectName="Cargar_stg_Regiones"
       DTS:TaskContact="Execute SQL Task; Microsoft Corporation; SQL Server 2022; © 2022 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
       DTS:ThreadHint="0">
       <DTS:Variables />
       <DTS:ObjectData>
         <SQLTask:SqlTaskData
-          SQLTask:Connection="{4662B4FD-23F6-4EA7-B8CB-363EBB6B3C0E}"
-          SQLTask:SqlStatementSource="/* Truncar y cargar stg.Ventas desde TailspinToys2020-US.dbo.Sales */&#xA;TRUNCATE TABLE stg.Ventas;&#xA;&#xA;INSERT INTO stg.Ventas (&#xA;  OrderNumber, OrderDate, ShipDate, CustomerStateID,&#xA;  ProductID, Quantity, UnitPrice, DiscountAmount, PromotionCode&#xA;)&#xA;SELECT&#xA;  s.OrderNumber, s.OrderDate, s.ShipDate, s.CustomerStateID,&#xA;  s.ProductID, s.Quantity, s.UnitPrice, s.DiscountAmount, s.PromotionCode&#xA;FROM [TailspinToys2020-US].dbo.Sales AS s;&#xA;" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask" />
+          SQLTask:Connection="{C5F3AA17-3771-41A8-8B68-5CA087F8355A}"
+          SQLTask:SqlStatementSource="TRUNCATE TABLE stg.Regiones;" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask" />
       </DTS:ObjectData>
     </DTS:Executable>
   </DTS:Executables>
@@ -62,9 +62,9 @@
       <GraphLayout
         Capacity="4" xmlns="clr-namespace:Microsoft.SqlServer.IntegrationServices.Designer.Model.Serialization;assembly=Microsoft.SqlServer.IntegrationServices.Graph">
         <NodeLayout
-          Size="162.327272727273,41.8909090909091"
-          Id="Package\Cargar_stg_Ventas"
-          TopLeft="247.000016255926,68.0000044753157" />
+          Size="172.8,42.7636363636364"
+          Id="Package\Cargar_stg_Regiones"
+          TopLeft="249.000012438745,45.9999990786115" />
       </GraphLayout>
     </LayoutInfo>
   </Package>

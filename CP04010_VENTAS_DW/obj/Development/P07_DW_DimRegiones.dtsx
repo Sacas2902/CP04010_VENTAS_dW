@@ -1,0 +1,137 @@
+<?xml version="1.0"?>
+<DTS:Executable xmlns:DTS="www.microsoft.com/SqlServer/Dts"
+  DTS:refId="Package"
+  DTS:CreationDate="8/10/2025 1:56:32 AM"
+  DTS:CreationName="Microsoft.Package"
+  DTS:CreatorComputerName="DESKTOP-EA2Q770"
+  DTS:CreatorName="DESKTOP-EA2Q770\SC"
+  DTS:DTSID="{1FBB1D09-78D5-4AD2-B711-061E4CA1E38A}"
+  DTS:ExecutableType="Microsoft.Package"
+  DTS:LastModifiedProductVersion="16.0.5685.2"
+  DTS:LocaleID="17418"
+  DTS:ObjectName="Package1"
+  DTS:PackageType="5"
+  DTS:VersionBuild="2"
+  DTS:VersionGUID="{6E1616EE-1BE7-4372-95AF-CEB2E1771BC4}">
+  <DTS:Property
+    DTS:Name="PackageFormatVersion">8</DTS:Property>
+  <DTS:ConnectionManagers>
+    <DTS:ConnectionManager
+      DTS:refId="Package.ConnectionManagers[localhost.SalesDW]"
+      DTS:CreationName="OLEDB"
+      DTS:DTSID="{65552755-BEC1-4BD9-82CC-1C45F8C5DFBE}"
+      DTS:ObjectName="localhost.SalesDW">
+      <DTS:ObjectData>
+        <DTS:ConnectionManager
+          DTS:ConnectRetryCount="1"
+          DTS:ConnectRetryInterval="5"
+          DTS:ConnectionString="Data Source=localhost;Initial Catalog=SalesDW;Provider=SQLNCLI11.1;Integrated Security=SSPI;Application Name=SSIS-Package1-{65552755-BEC1-4BD9-82CC-1C45F8C5DFBE}localhost.SalesDW;Auto Translate=False;" />
+      </DTS:ObjectData>
+    </DTS:ConnectionManager>
+  </DTS:ConnectionManagers>
+  <DTS:Variables />
+  <DTS:Executables>
+    <DTS:Executable
+      DTS:refId="Package\Cargar_DimRegiones_SCD2"
+      DTS:CreationName="Microsoft.ExecuteSQLTask"
+      DTS:Description="Cargar_DimRegiones_SCD2"
+      DTS:DTSID="{f24efed2-168e-4433-ac46-e6448226a724}"
+      DTS:ExecutableType="Microsoft.ExecuteSQLTask"
+      DTS:LocaleID="-1"
+      DTS:ObjectName="Cargar_DimRegiones_SCD2"
+      DTS:TaskContact="Execute SQL Task; Microsoft Corporation; SQL Server 2022; © 2022 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
+      DTS:ThreadHint="0">
+      <DTS:Variables />
+      <DTS:ObjectData>
+        <SQLTask:SqlTaskData
+          SQLTask:Connection="{9795C37E-1C74-478E-8C88-59D81873639B}"
+          SQLTask:SqlStatementSource="/* Carga SCD2 para dw.DimRegiones desde stg.Regiones */" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask" />
+      </DTS:ObjectData>
+    </DTS:Executable>
+    <DTS:Executable
+      DTS:refId="Package\Prep_SKs_DimRegiones"
+      DTS:CreationName="Microsoft.ExecuteSQLTask"
+      DTS:Description="Prep_SKs_DimRegiones"
+      DTS:DTSID="{ef0dbd89-df6c-43f9-ae98-df816ecbd1c6}"
+      DTS:ExecutableType="Microsoft.ExecuteSQLTask"
+      DTS:LocaleID="-1"
+      DTS:ObjectName="Prep_SKs_DimRegiones"
+      DTS:TaskContact="Execute SQL Task; Microsoft Corporation; SQL Server 2022; © 2022 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
+      DTS:ThreadHint="0">
+      <DTS:Variables />
+      <DTS:ObjectData>
+        <SQLTask:SqlTaskData
+          SQLTask:Connection="{9795C37E-1C74-478E-8C88-59D81873639B}"
+          SQLTask:SqlStatementSource="-- Crear secuencia y default para RegionSK si no existen (idempotente)&#xA;IF OBJECT_ID('dw.SeqRegionSK','SO') IS NULL&#xA;    CREATE SEQUENCE dw.SeqRegionSK AS BIGINT START WITH 1 INCREMENT BY 1;&#xA;&#xA;IF NOT EXISTS (&#xA;    SELECT 1&#xA;    FROM sys.default_constraints dc&#xA;    JOIN sys.columns c&#xA;      ON c.object_id = OBJECT_ID('dw.DimRegiones') AND c.column_id = dc.parent_column_id&#xA;    WHERE c.name = 'RegionSK'&#xA;)&#xA;BEGIN&#xA;    ALTER TABLE dw.DimRegiones&#xA;    ADD CONSTRAINT DF_DimRegiones_SK&#xA;        DEFAULT NEXT VALUE FOR dw.SeqRegionSK FOR RegionSK;&#xA;END&#xA;" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask" />
+      </DTS:ObjectData>
+    </DTS:Executable>
+  </DTS:Executables>
+  <DTS:PrecedenceConstraints>
+    <DTS:PrecedenceConstraint
+      DTS:refId="Package.PrecedenceConstraints[Restricción]"
+      DTS:CreationName=""
+      DTS:DTSID="{c0e161d8-67c0-4fe0-bc04-45d17300af38}"
+      DTS:From="Package\Prep_SKs_DimRegiones"
+      DTS:LogicalAnd="True"
+      DTS:ObjectName="Restricción"
+      DTS:To="Package\Cargar_DimRegiones_SCD2" />
+  </DTS:PrecedenceConstraints>
+  <DTS:DesignTimeProperties><![CDATA[<?xml version="1.0"?>
+<!--Esta sección CDATA contiene la información de diseño del paquete. Esta sección incluye información como, por ejemplo, las coordenadas (x,y), el ancho y el alto.-->
+<!--Si edita manualmente esta sección y comete un error, puede eliminarlo. -->
+<!--El paquete podrá cargarse normalmente, pero se perderá la información de diseño anterior y el diseñador reorganizará los elementos automáticamente en la superficie de diseño.-->
+<Objects
+  Version="8">
+  <!--Cada uno de los nodos siguientes contiene propiedades que no afectan al comportamiento en tiempo de ejecución.-->
+  <Package
+    design-time-name="Package">
+    <LayoutInfo>
+      <GraphLayout
+        Capacity="4" xmlns="clr-namespace:Microsoft.SqlServer.IntegrationServices.Designer.Model.Serialization;assembly=Microsoft.SqlServer.IntegrationServices.Graph" xmlns:mssgle="clr-namespace:Microsoft.SqlServer.Graph.LayoutEngine;assembly=Microsoft.SqlServer.Graph" xmlns:assembly="http://schemas.microsoft.com/winfx/2006/xaml">
+        <NodeLayout
+          Size="202.472727272728,41.8909090909091"
+          Id="Package\Cargar_DimRegiones_SCD2"
+          TopLeft="684.000045016411,307.000020204734" />
+        <NodeLayout
+          Size="185.89090909091,41.8909090909091"
+          Id="Package\Prep_SKs_DimRegiones"
+          TopLeft="531.000034946951,137.000009016445" />
+        <EdgeLayout
+          Id="Package.PrecedenceConstraints[Restricción]"
+          TopLeft="623.945489492405,178.890918107354">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="161.290919160369,128.10910209738"
+              Start="0,0"
+              End="161.290919160369,120.60910209738">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,60.0545510486901" />
+                  <mssgle:CubicBezierSegment
+                    Point1="0,60.0545510486901"
+                    Point2="0,64.0545510486901"
+                    Point3="4,64.0545510486901" />
+                  <mssgle:LineSegment
+                    End="157.290919160369,64.0545510486901" />
+                  <mssgle:CubicBezierSegment
+                    Point1="157.290919160369,64.0545510486901"
+                    Point2="161.290919160369,64.0545510486901"
+                    Point3="161.290919160369,68.0545510486901" />
+                  <mssgle:LineSegment
+                    End="161.290919160369,120.60910209738" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+      </GraphLayout>
+    </LayoutInfo>
+  </Package>
+</Objects>]]></DTS:DesignTimeProperties>
+</DTS:Executable>
