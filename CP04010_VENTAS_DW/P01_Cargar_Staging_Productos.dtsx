@@ -1,0 +1,72 @@
+﻿<?xml version="1.0"?>
+<DTS:Executable xmlns:DTS="www.microsoft.com/SqlServer/Dts"
+  DTS:refId="Package"
+  DTS:CreationDate="8/10/2025 1:41:48 AM"
+  DTS:CreationName="Microsoft.Package"
+  DTS:CreatorComputerName="DESKTOP-EA2Q770"
+  DTS:CreatorName="DESKTOP-EA2Q770\SC"
+  DTS:DTSID="{CAF7F0D5-9A37-47E3-B22A-78AFD7C85105}"
+  DTS:ExecutableType="Microsoft.Package"
+  DTS:LastModifiedProductVersion="16.0.5685.2"
+  DTS:LocaleID="17418"
+  DTS:ObjectName="P01_Cargar_Staging_Productos"
+  DTS:PackageType="5"
+  DTS:VersionBuild="3"
+  DTS:VersionGUID="{B2325300-22C0-4BD2-8E95-D35CEC4D9A9B}">
+  <DTS:Property
+    DTS:Name="PackageFormatVersion">8</DTS:Property>
+  <DTS:ConnectionManagers>
+    <DTS:ConnectionManager
+      DTS:refId="Package.ConnectionManagers[localhost.SalesDW]"
+      DTS:CreationName="OLEDB"
+      DTS:DTSID="{00E9A77E-85EC-4F11-8B4E-1B6428F3EE71}"
+      DTS:ObjectName="localhost.SalesDW">
+      <DTS:ObjectData>
+        <DTS:ConnectionManager
+          DTS:ConnectRetryCount="1"
+          DTS:ConnectRetryInterval="5"
+          DTS:ConnectionString="Data Source=localhost;Initial Catalog=SalesDW;Provider=SQLNCLI11.1;Integrated Security=SSPI;Application Name=SSIS-P01_Cargar_Staging_Productos-{00E9A77E-85EC-4F11-8B4E-1B6428F3EE71}localhost.SalesDW;Auto Translate=False;" />
+      </DTS:ObjectData>
+    </DTS:ConnectionManager>
+  </DTS:ConnectionManagers>
+  <DTS:Variables />
+  <DTS:Executables>
+    <DTS:Executable
+      DTS:refId="Package\Cargar_stg_Productos"
+      DTS:CreationName="Microsoft.ExecuteSQLTask"
+      DTS:Description="Cargar_stg_Productos"
+      DTS:DTSID="{5e2d955f-9073-4999-a4e0-37ffe2e7daef}"
+      DTS:ExecutableType="Microsoft.ExecuteSQLTask"
+      DTS:LocaleID="-1"
+      DTS:ObjectName="Cargar_stg_Productos"
+      DTS:TaskContact="Execute SQL Task; Microsoft Corporation; SQL Server 2022; © 2022 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
+      DTS:ThreadHint="0">
+      <DTS:Variables />
+      <DTS:ObjectData>
+        <SQLTask:SqlTaskData
+          SQLTask:Connection="{8BDF06F4-9682-4C5C-9C2B-E68A5B0E7103}"
+          SQLTask:SqlStatementSource="/* Truncar y cargar stg.Productos desde TailspinToys2020-US.dbo.Product */&#xA;TRUNCATE TABLE stg.Productos;&#xA;&#xA;INSERT INTO stg.Productos (&#xA;  ProductID, ProductSKU, ProductName, ProductCategory,&#xA;  ItemGroup, KitType, Channels, Demographic, RetailPrice, Photo&#xA;)&#xA;SELECT&#xA;  p.ProductID, p.ProductSKU, p.ProductName, p.ProductCategory,&#xA;  p.ItemGroup, p.KitType, p.Channels, p.Demographic, p.RetailPrice,&#xA;  CAST(NULL AS VARBINARY(MAX)) AS Photo&#xA;FROM [TailspinToys2020-US].dbo.Product AS p;&#xA;" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask" />
+      </DTS:ObjectData>
+    </DTS:Executable>
+  </DTS:Executables>
+  <DTS:DesignTimeProperties><![CDATA[<?xml version="1.0"?>
+<!--Esta sección CDATA contiene la información de diseño del paquete. Esta sección incluye información como, por ejemplo, las coordenadas (x,y), el ancho y el alto.-->
+<!--Si edita manualmente esta sección y comete un error, puede eliminarlo. -->
+<!--El paquete podrá cargarse normalmente, pero se perderá la información de diseño anterior y el diseñador reorganizará los elementos automáticamente en la superficie de diseño.-->
+<Objects
+  Version="8">
+  <!--Cada uno de los nodos siguientes contiene propiedades que no afectan al comportamiento en tiempo de ejecución.-->
+  <Package
+    design-time-name="Package">
+    <LayoutInfo>
+      <GraphLayout
+        Capacity="4" xmlns="clr-namespace:Microsoft.SqlServer.IntegrationServices.Designer.Model.Serialization;assembly=Microsoft.SqlServer.IntegrationServices.Graph">
+        <NodeLayout
+          Size="175.418181818182,41.8909090909091"
+          Id="Package\Cargar_stg_Productos"
+          TopLeft="251.00001651918,64.0000042120619" />
+      </GraphLayout>
+    </LayoutInfo>
+  </Package>
+</Objects>]]></DTS:DesignTimeProperties>
+</DTS:Executable>

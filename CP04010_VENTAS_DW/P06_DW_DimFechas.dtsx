@@ -1,0 +1,85 @@
+﻿<?xml version="1.0"?>
+<DTS:Executable xmlns:DTS="www.microsoft.com/SqlServer/Dts"
+  DTS:refId="Package"
+  DTS:CreationDate="8/10/2025 1:56:08 AM"
+  DTS:CreationName="Microsoft.Package"
+  DTS:CreatorComputerName="DESKTOP-EA2Q770"
+  DTS:CreatorName="DESKTOP-EA2Q770\SC"
+  DTS:DTSID="{05E5E200-A02D-4143-A99F-8DAD951FC38B}"
+  DTS:ExecutableType="Microsoft.Package"
+  DTS:LastModifiedProductVersion="16.0.5685.2"
+  DTS:LocaleID="17418"
+  DTS:ObjectName="Package1"
+  DTS:PackageType="5"
+  DTS:VersionBuild="2"
+  DTS:VersionGUID="{B4080363-090A-4644-956C-3D637728215B}">
+  <DTS:Property
+    DTS:Name="PackageFormatVersion">8</DTS:Property>
+  <DTS:ConnectionManagers>
+    <DTS:ConnectionManager
+      DTS:refId="Package.ConnectionManagers[localhost.SalesDW]"
+      DTS:CreationName="OLEDB"
+      DTS:DTSID="{B74DB0C3-A19C-462E-8162-2EEAD4967E08}"
+      DTS:ObjectName="localhost.SalesDW">
+      <DTS:ObjectData>
+        <DTS:ConnectionManager
+          DTS:ConnectRetryCount="1"
+          DTS:ConnectRetryInterval="5"
+          DTS:ConnectionString="Data Source=localhost;Initial Catalog=SalesDW;Provider=SQLNCLI11.1;Integrated Security=SSPI;Application Name=SSIS-Package1-{B74DB0C3-A19C-462E-8162-2EEAD4967E08}localhost.SalesDW;Auto Translate=False;" />
+      </DTS:ObjectData>
+    </DTS:ConnectionManager>
+  </DTS:ConnectionManagers>
+  <DTS:Variables />
+  <DTS:Executables>
+    <DTS:Executable
+      DTS:refId="Package\Cargar_DimFechas"
+      DTS:CreationName="Microsoft.ExecuteSQLTask"
+      DTS:Description="Cargar_DimFechas"
+      DTS:DTSID="{25a18cde-5860-4a4f-950e-a1d935958cf4}"
+      DTS:ExecutableType="Microsoft.ExecuteSQLTask"
+      DTS:LocaleID="-1"
+      DTS:ObjectName="Cargar_DimFechas"
+      DTS:TaskContact="Execute SQL Task; Microsoft Corporation; SQL Server 2022; © 2022 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
+      DTS:ThreadHint="0">
+      <DTS:Variables />
+      <DTS:ObjectData>
+        <SQLTask:SqlTaskData
+          SQLTask:Connection="{1E09F924-02CE-4E7F-ACF4-D9CD1FDC868B}"
+          SQLTask:SqlStatementSource="-- Parámetros del paquete&#xA;DECLARE @StartDate DATE = ?;&#xA;DECLARE @EndDate   DATE = ?;&#xA;&#xA;;WITH d AS (&#xA;  SELECT @StartDate AS [Date]&#xA;  UNION ALL&#xA;  SELECT DATEADD(DAY,1,[Date]) FROM d WHERE [Date] &lt; @EndDate&#xA;)&#xA;INSERT INTO dw.DimFechas(&#xA;  DateKey,[Date],[Year],[Quarter],[Month],MonthName,[Day],DayOfWeek,DayName,IsWeekend&#xA;)&#xA;SELECT&#xA;  CONVERT(INT,FORMAT([Date],'yyyyMMdd')) AS DateKey,&#xA;  [Date]                                         AS [Date],&#xA;  DATEPART(YEAR,[Date])                          AS [Year],&#xA;  DATEPART(QUARTER,[Date])                       AS [Quarter],&#xA;  DATEPART(MONTH,[Date])                         AS [Month],&#xA;  DATENAME(MONTH,[Date])                         AS MonthName,&#xA;  DATEPART(DAY,[Date])                           AS [Day],&#xA;  DATEPART(WEEKDAY,[Date])                       AS DayOfWeek,&#xA;  DATENAME(WEEKDAY,[Date])                       AS DayName,&#xA;  CASE WHEN DATENAME(WEEKDAY,[Date]) IN (N'Saturday',N'Sunday') THEN 1 ELSE 0 END AS IsWeekend&#xA;FROM d&#xA;WHERE NOT EXISTS (&#xA;  SELECT 1 FROM dw.DimFechas f&#xA;  WHERE f.DateKey = CONVERT(INT,FORMAT(d.[Date],'yyyyMMdd'))&#xA;)&#xA;OPTION (MAXRECURSION 0);&#xA;" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask">
+          <SQLTask:ParameterBinding
+            SQLTask:ParameterName="0"
+            SQLTask:DtsVariableName="User::StartDate"
+            SQLTask:ParameterDirection="Input"
+            SQLTask:DataType="135"
+            SQLTask:ParameterSize="-1" />
+          <SQLTask:ParameterBinding
+            SQLTask:ParameterName="1"
+            SQLTask:DtsVariableName="User::EndDate"
+            SQLTask:ParameterDirection="Input"
+            SQLTask:DataType="135"
+            SQLTask:ParameterSize="-1" />
+        </SQLTask:SqlTaskData>
+      </DTS:ObjectData>
+    </DTS:Executable>
+  </DTS:Executables>
+  <DTS:DesignTimeProperties><![CDATA[<?xml version="1.0"?>
+<!--Esta sección CDATA contiene la información de diseño del paquete. Esta sección incluye información como, por ejemplo, las coordenadas (x,y), el ancho y el alto.-->
+<!--Si edita manualmente esta sección y comete un error, puede eliminarlo. -->
+<!--El paquete podrá cargarse normalmente, pero se perderá la información de diseño anterior y el diseñador reorganizará los elementos automáticamente en la superficie de diseño.-->
+<Objects
+  Version="8">
+  <!--Cada uno de los nodos siguientes contiene propiedades que no afectan al comportamiento en tiempo de ejecución.-->
+  <Package
+    design-time-name="Package">
+    <LayoutInfo>
+      <GraphLayout
+        Capacity="4" xmlns="clr-namespace:Microsoft.SqlServer.IntegrationServices.Designer.Model.Serialization;assembly=Microsoft.SqlServer.IntegrationServices.Graph">
+        <NodeLayout
+          Size="162.327272727273,41.8909090909091"
+          Id="Package\Cargar_DimFechas"
+          TopLeft="607.000039948774,131.000008621564" />
+      </GraphLayout>
+    </LayoutInfo>
+  </Package>
+</Objects>]]></DTS:DesignTimeProperties>
+</DTS:Executable>
