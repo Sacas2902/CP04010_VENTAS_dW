@@ -11,8 +11,8 @@
   DTS:LocaleID="17418"
   DTS:ObjectName="Package1"
   DTS:PackageType="5"
-  DTS:VersionBuild="2"
-  DTS:VersionGUID="{E7A779DC-CBC9-4DEB-BC8F-BEE9F72A6418}">
+  DTS:VersionBuild="11"
+  DTS:VersionGUID="{6D37D807-282D-45A9-BFB3-DA2D35EB8422}">
   <DTS:Property
     DTS:Name="PackageFormatVersion">8</DTS:Property>
   <DTS:ConnectionManagers>
@@ -44,8 +44,8 @@
       <DTS:Variables />
       <DTS:ObjectData>
         <SQLTask:SqlTaskData
-          SQLTask:Connection="{3212EC88-4479-4B16-B122-4F38ACE2B181}"
-          SQLTask:SqlStatementSource="/* Carga SCD2 de dw.DimProductos desde stg.Productos */" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask" />
+          SQLTask:Connection="{5D40791B-D3A8-42CF-8C08-B195B81CA53E}"
+          SQLTask:SqlStatementSource="/* === P09 - SCD2 DimProductos sin MERGE, usando #src y SK explícito === */&#xA;DECLARE @now DATETIME2(0) = SYSUTCDATETIME();&#xA;&#xA;-- 0) Asegurar secuencia (idempotente)&#xA;IF OBJECT_ID('dw.SeqProductSK','SO') IS NULL&#xA;    CREATE SEQUENCE dw.SeqProductSK AS BIGINT START WITH 1 INCREMENT BY 1;&#xA;&#xA;-- (opcional) arreglar intentos previos: si quedó algún ProductSK NULL, rellenarlo&#xA;UPDATE d&#xA;SET ProductSK = NEXT VALUE FOR dw.SeqProductSK&#xA;FROM dw.DimProductos d&#xA;WHERE d.ProductSK IS NULL;&#xA;&#xA;-- 1) Construir fuente saneada y deduplicada&#xA;IF OBJECT_ID('tempdb..#src') IS NOT NULL DROP TABLE #src;&#xA;CREATE TABLE #src (&#xA;  ProductID        INT           NOT NULL,&#xA;  ProductSKU       NVARCHAR(100) NOT NULL,&#xA;  ProductName      NVARCHAR(200) NOT NULL,&#xA;  ProductCategory  NVARCHAR(100) NOT NULL,&#xA;  ItemGroup        NVARCHAR(100) NOT NULL,&#xA;  KitType          NVARCHAR(100) NOT NULL,&#xA;  Channels         NVARCHAR(100) NOT NULL,&#xA;  Demographic      NVARCHAR(100) NOT NULL,&#xA;  RetailPrice      DECIMAL(18,4) NOT NULL&#xA;);&#xA;&#xA;INSERT INTO #src&#xA;SELECT&#xA;  ProductID,&#xA;  ISNULL(NULLIF(LTRIM(RTRIM(ProductSKU)),      ''),'SIN SKU'),&#xA;  ISNULL(NULLIF(LTRIM(RTRIM(ProductName)),     ''),'SIN NOMBRE'),&#xA;  ISNULL(NULLIF(LTRIM(RTRIM(ProductCategory)), ''),'SIN CATEGORIA'),&#xA;  ISNULL(NULLIF(LTRIM(RTRIM(ItemGroup)),       ''),'SIN GRUPO'),&#xA;  ISNULL(NULLIF(LTRIM(RTRIM(KitType)),         ''),'SIN TIPO'),&#xA;  ISNULL(NULLIF(LTRIM(RTRIM(Channels)),        ''),'SIN CANAL'),&#xA;  ISNULL(NULLIF(LTRIM(RTRIM(Demographic)),     ''),'SIN DEMOGRAFIA'),&#xA;  ISNULL(RetailPrice,0.0)&#xA;FROM (&#xA;  SELECT p.*,&#xA;         ROW_NUMBER() OVER (PARTITION BY p.ProductID ORDER BY p.ProductID) AS rn&#xA;  FROM stg.Productos p&#xA;) x&#xA;WHERE x.rn = 1;&#xA;&#xA;-- 2) Cerrar versión vigente cuando cambie algún atributo&#xA;UPDATE d&#xA;   SET d.IsCurrent   = 0,&#xA;       d.EffectiveTo = @now&#xA;FROM dw.DimProductos d&#xA;JOIN #src s&#xA;  ON d.ProductID = s.ProductID&#xA; AND d.IsCurrent = 1&#xA;WHERE ISNULL(d.ProductSKU,'')      &lt;&gt; ISNULL(s.ProductSKU,'')&#xA;   OR ISNULL(d.ProductName,'')     &lt;&gt; ISNULL(s.ProductName,'')&#xA;   OR ISNULL(d.ProductCategory,'') &lt;&gt; ISNULL(s.ProductCategory,'')&#xA;   OR ISNULL(d.ItemGroup,'')       &lt;&gt; ISNULL(s.ItemGroup,'')&#xA;   OR ISNULL(d.KitType,'')         &lt;&gt; ISNULL(s.KitType,'')&#xA;   OR ISNULL(d.Channels,'')        &lt;&gt; ISNULL(s.Channels,'')&#xA;   OR ISNULL(d.Demographic,'')     &lt;&gt; ISNULL(s.Demographic,'')&#xA;   OR ISNULL(d.RetailPrice,0)      &lt;&gt; ISNULL(s.RetailPrice,0);&#xA;&#xA;-- 3) Insertar NUEVOS (con ProductSK explícito de la secuencia)&#xA;INSERT INTO dw.DimProductos (&#xA;  ProductSK,&#xA;  ProductID, ProductSKU, ProductName, ProductCategory,&#xA;  ItemGroup, KitType, Channels, Demographic, RetailPrice,&#xA;  EffectiveFrom, EffectiveTo, IsCurrent&#xA;)&#xA;SELECT&#xA;  NEXT VALUE FOR dw.SeqProductSK,&#xA;  s.ProductID, s.ProductSKU, s.ProductName, s.ProductCategory,&#xA;  s.ItemGroup, s.KitType, s.Channels, s.Demographic, s.RetailPrice,&#xA;  @now, '9999-12-31', 1&#xA;FROM #src s&#xA;LEFT JOIN dw.DimProductos d&#xA;  ON d.ProductID = s.ProductID AND d.IsCurrent = 1&#xA;WHERE d.ProductID IS NULL;&#xA;&#xA;-- 4) Insertar NUEVA VERSIÓN para los que se acaban de cerrar (también con SK explícito)&#xA;INSERT INTO dw.DimProductos (&#xA;  ProductSK,&#xA;  ProductID, ProductSKU, ProductName, ProductCategory,&#xA;  ItemGroup, KitType, Channels, Demographic, RetailPrice,&#xA;  EffectiveFrom, EffectiveTo, IsCurrent&#xA;)&#xA;SELECT&#xA;  NEXT VALUE FOR dw.SeqProductSK,&#xA;  s.ProductID, s.ProductSKU, s.ProductName, s.ProductCategory,&#xA;  s.ItemGroup, s.KitType, s.Channels, s.Demographic, s.RetailPrice,&#xA;  @now, '9999-12-31', 1&#xA;FROM #src s&#xA;JOIN dw.DimProductos d&#xA;  ON d.ProductID = s.ProductID&#xA; AND d.IsCurrent = 0&#xA; AND d.EffectiveTo = @now;&#xA;" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask" />
       </DTS:ObjectData>
     </DTS:Executable>
     <DTS:Executable
@@ -61,8 +61,8 @@
       <DTS:Variables />
       <DTS:ObjectData>
         <SQLTask:SqlTaskData
-          SQLTask:Connection="{3212EC88-4479-4B16-B122-4F38ACE2B181}"
-          SQLTask:SqlStatementSource="-- Crear secuencia para ProductSK (si no existe)" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask" />
+          SQLTask:Connection="{5D40791B-D3A8-42CF-8C08-B195B81CA53E}"
+          SQLTask:SqlStatementSource="-- Crear secuencia para ProductSK (si no existe)&#xA;IF OBJECT_ID('dw.SeqProductSK','SO') IS NULL&#xA;    CREATE SEQUENCE dw.SeqProductSK AS BIGINT START WITH 1 INCREMENT BY 1;&#xA;&#xA;-- Agregar default constraint para autogenerar SK (si no existe)&#xA;IF NOT EXISTS (&#xA;  SELECT 1&#xA;  FROM sys.default_constraints dc&#xA;  JOIN sys.columns c&#xA;    ON c.object_id = OBJECT_ID('dw.DimProductos') AND c.column_id = dc.parent_column_id&#xA;  WHERE c.name = 'ProductSK'&#xA;)&#xA;BEGIN&#xA;  ALTER TABLE dw.DimProductos&#xA;  ADD CONSTRAINT DF_DimProductos_SK&#xA;    DEFAULT NEXT VALUE FOR dw.SeqProductSK FOR ProductSK;&#xA;END&#xA;" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask" />
       </DTS:ObjectData>
     </DTS:Executable>
   </DTS:Executables>

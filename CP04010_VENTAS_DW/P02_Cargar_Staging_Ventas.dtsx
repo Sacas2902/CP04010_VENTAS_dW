@@ -11,16 +11,16 @@
   DTS:LocaleID="17418"
   DTS:ObjectName="Package1"
   DTS:PackageType="5"
-  DTS:VersionBuild="3"
-  DTS:VersionGUID="{B86B956B-2A62-4537-A2E1-6F528A6A964C}">
+  DTS:VersionBuild="5"
+  DTS:VersionGUID="{18577BC2-A660-47AE-9DB3-14EFC0558973}">
   <DTS:Property
     DTS:Name="PackageFormatVersion">8</DTS:Property>
   <DTS:ConnectionManagers>
     <DTS:ConnectionManager
-      DTS:refId="Package.ConnectionManagers[localhost.SalesDW]"
+      DTS:refId="Package.ConnectionManagers[cn_dw]"
       DTS:CreationName="OLEDB"
       DTS:DTSID="{4662B4FD-23F6-4EA7-B8CB-363EBB6B3C0E}"
-      DTS:ObjectName="localhost.SalesDW">
+      DTS:ObjectName="cn_dw">
       <DTS:ObjectData>
         <DTS:ConnectionManager
           DTS:ConnectRetryCount="1"
@@ -48,7 +48,34 @@
           SQLTask:SqlStatementSource="/* Truncar y cargar stg.Ventas desde TailspinToys2020-US.dbo.Sales */&#xA;TRUNCATE TABLE stg.Ventas;&#xA;&#xA;INSERT INTO stg.Ventas (&#xA;  OrderNumber, OrderDate, ShipDate, CustomerStateID,&#xA;  ProductID, Quantity, UnitPrice, DiscountAmount, PromotionCode&#xA;)&#xA;SELECT&#xA;  s.OrderNumber, s.OrderDate, s.ShipDate, s.CustomerStateID,&#xA;  s.ProductID, s.Quantity, s.UnitPrice, s.DiscountAmount, s.PromotionCode&#xA;FROM [TailspinToys2020-US].dbo.Sales AS s;&#xA;" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask" />
       </DTS:ObjectData>
     </DTS:Executable>
+    <DTS:Executable
+      DTS:refId="Package\Validadcion"
+      DTS:CreationName="Microsoft.ExecuteSQLTask"
+      DTS:Description="validacion "
+      DTS:DTSID="{CF59D3E1-5874-411C-8335-69422596C4EE}"
+      DTS:ExecutableType="Microsoft.ExecuteSQLTask"
+      DTS:LocaleID="-1"
+      DTS:ObjectName="Validadcion"
+      DTS:TaskContact="Execute SQL Task; Microsoft Corporation; SQL Server 2022; © 2022 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
+      DTS:ThreadHint="0">
+      <DTS:Variables />
+      <DTS:ObjectData>
+        <SQLTask:SqlTaskData
+          SQLTask:Connection="{4662B4FD-23F6-4EA7-B8CB-363EBB6B3C0E}"
+          SQLTask:SqlStatementSource="DECLARE @minOrder date = (SELECT MIN(CAST(OrderDate AS date)) FROM stg.Ventas);&#xA;DECLARE @maxDates date = (&#xA;  SELECT MAX(x.d)&#xA;  FROM (SELECT MAX(CAST(OrderDate AS date)) d FROM stg.Ventas&#xA;        UNION ALL&#xA;        SELECT MAX(CAST(ShipDate  AS date)) d FROM stg.Ventas) x&#xA;);&#xA;&#xA;IF @minOrder IS NULL OR @maxDates IS NULL&#xA;BEGIN&#xA;  -- staging sin fechas: no hacemos nada y salimos sin error&#xA;  RETURN;&#xA;END;&#xA;&#xA;DECLARE @StartDate date = DATEADD(YEAR, -3, @minOrder);&#xA;DECLARE @EndDate   date = DATEADD(YEAR,  3, @maxDates);&#xA;&#xA;;WITH d AS (&#xA;  SELECT @StartDate AS [Date]&#xA;  UNION ALL&#xA;  SELECT DATEADD(DAY,1,[Date]) FROM d WHERE [Date] &lt; @EndDate&#xA;)&#xA;INSERT INTO dw.DimFechas&#xA;  (DateKey,[Date],[Year],[Quarter],[Month],MonthName,[Day],DayOfWeek,DayName,IsWeekend)&#xA;SELECT&#xA;  CONVERT(int, CONVERT(char(8), d.[Date], 112)),&#xA;  d.[Date],&#xA;  DATEPART(YEAR,d.[Date]),&#xA;  DATEPART(QUARTER,d.[Date]),&#xA;  DATEPART(MONTH,d.[Date]),&#xA;  DATENAME(MONTH,d.[Date]),&#xA;  DATEPART(DAY,d.[Date]),&#xA;  DATEPART(WEEKDAY,d.[Date]),&#xA;  DATENAME(WEEKDAY,d.[Date]),&#xA;  CASE WHEN DATENAME(WEEKDAY,d.[Date]) IN (N'Saturday', N'Sunday') THEN 1 ELSE 0 END&#xA;FROM d&#xA;WHERE NOT EXISTS (&#xA;  SELECT 1&#xA;  FROM dw.DimFechas f&#xA;  WHERE f.DateKey = CONVERT(int, CONVERT(char(8), d.[Date], 112))&#xA;)&#xA;OPTION (MAXRECURSION 0);&#xA;" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask" />
+      </DTS:ObjectData>
+    </DTS:Executable>
   </DTS:Executables>
+  <DTS:PrecedenceConstraints>
+    <DTS:PrecedenceConstraint
+      DTS:refId="Package.PrecedenceConstraints[Restricción]"
+      DTS:CreationName=""
+      DTS:DTSID="{7C98EA50-1ED0-4789-BAEE-DF761053B73C}"
+      DTS:From="Package\Cargar_stg_Ventas"
+      DTS:LogicalAnd="True"
+      DTS:ObjectName="Restricción"
+      DTS:To="Package\Validadcion" />
+  </DTS:PrecedenceConstraints>
   <DTS:DesignTimeProperties><![CDATA[<?xml version="1.0"?>
 <!--Esta sección CDATA contiene la información de diseño del paquete. Esta sección incluye información como, por ejemplo, las coordenadas (x,y), el ancho y el alto.-->
 <!--Si edita manualmente esta sección y comete un error, puede eliminarlo. -->
@@ -60,11 +87,49 @@
     design-time-name="Package">
     <LayoutInfo>
       <GraphLayout
-        Capacity="4" xmlns="clr-namespace:Microsoft.SqlServer.IntegrationServices.Designer.Model.Serialization;assembly=Microsoft.SqlServer.IntegrationServices.Graph">
+        Capacity="4" xmlns="clr-namespace:Microsoft.SqlServer.IntegrationServices.Designer.Model.Serialization;assembly=Microsoft.SqlServer.IntegrationServices.Graph" xmlns:mssgle="clr-namespace:Microsoft.SqlServer.Graph.LayoutEngine;assembly=Microsoft.SqlServer.Graph" xmlns:assembly="http://schemas.microsoft.com/winfx/2006/xaml">
         <NodeLayout
           Size="162.327272727273,41.8909090909091"
           Id="Package\Cargar_stg_Ventas"
-          TopLeft="247.000016255926,68.0000044753157" />
+          TopLeft="194.000012767812,58.000003817181" />
+        <NodeLayout
+          Size="129.163636363637,41.8909090909091"
+          Id="Package\Validadcion"
+          TopLeft="294.000019349159,205.000013491761" />
+        <EdgeLayout
+          Id="Package.PrecedenceConstraints[Restricción]"
+          TopLeft="275.163649131449,99.8909129080901">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="83.4181883995286,105.10910058367"
+              Start="0,0"
+              End="83.4181883995286,97.6091005836705">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,48.5545502918352" />
+                  <mssgle:CubicBezierSegment
+                    Point1="0,48.5545502918352"
+                    Point2="0,52.5545502918352"
+                    Point3="4,52.5545502918352" />
+                  <mssgle:LineSegment
+                    End="79.4181883995286,52.5545502918352" />
+                  <mssgle:CubicBezierSegment
+                    Point1="79.4181883995286,52.5545502918352"
+                    Point2="83.4181883995286,52.5545502918352"
+                    Point3="83.4181883995286,56.5545502918352" />
+                  <mssgle:LineSegment
+                    End="83.4181883995286,97.6091005836705" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
       </GraphLayout>
     </LayoutInfo>
   </Package>

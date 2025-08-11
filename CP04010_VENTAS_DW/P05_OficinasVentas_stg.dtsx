@@ -11,8 +11,8 @@
   DTS:LocaleID="17418"
   DTS:ObjectName="Package1"
   DTS:PackageType="5"
-  DTS:VersionBuild="2"
-  DTS:VersionGUID="{616444B8-BC71-414E-B2EA-BB7214AF83D5}">
+  DTS:VersionBuild="6"
+  DTS:VersionGUID="{C8AF1614-14BE-45DE-AAFB-ECEDAFDD2522}">
   <DTS:Property
     DTS:Name="PackageFormatVersion">8</DTS:Property>
   <DTS:ConnectionManagers>
@@ -44,8 +44,8 @@
       <DTS:Variables />
       <DTS:ObjectData>
         <SQLTask:SqlTaskData
-          SQLTask:Connection="{A5A4509E-A2F6-4846-BE15-390A9182059A}"
-          SQLTask:SqlStatementSource="/* Truncar y cargar stg.OficinasVentas desde TailspinToys2020-US.dbo.SalesOffice */" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask" />
+          SQLTask:Connection="{19895B82-E31E-45CB-B40F-E0A662A2711C}"
+          SQLTask:SqlStatementSource="/* Truncar y cargar stg.OficinasVentas desde TailspinToys2020-US.dbo.SalesOffice */&#xA;TRUNCATE TABLE stg.OficinasVentas;&#xA;&#xA;INSERT INTO stg.OficinasVentas (&#xA;  SalesOfficeID, AddressLine1, AddressLine2, City,&#xA;  StateID, PostalCode, Telephone, Facsimile, Email&#xA;)&#xA;SELECT&#xA;  so.SalesOfficeID, so.AddressLine1, so.AddressLine2, so.City,&#xA;  so.StateID, so.PostalCode, so.Telephone, so.Facsimile, so.Email&#xA;FROM [TailspinToys2020-US].dbo.SalesOffice AS so;&#xA;" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask" />
       </DTS:ObjectData>
     </DTS:Executable>
   </DTS:Executables>

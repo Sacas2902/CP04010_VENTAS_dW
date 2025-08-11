@@ -11,8 +11,8 @@
   DTS:LocaleID="17418"
   DTS:ObjectName="Package1"
   DTS:PackageType="5"
-  DTS:VersionBuild="2"
-  DTS:VersionGUID="{65FC9B52-D29F-45B5-86C3-B8B2B9A3C5F7}">
+  DTS:VersionBuild="5"
+  DTS:VersionGUID="{3E9ADD35-A3C7-4F0F-8865-575F9D44C7E8}">
   <DTS:Property
     DTS:Name="PackageFormatVersion">8</DTS:Property>
   <DTS:ConnectionManagers>
@@ -44,8 +44,8 @@
       <DTS:Variables />
       <DTS:ObjectData>
         <SQLTask:SqlTaskData
-          SQLTask:Connection="{C9EB955B-5D91-4215-AFB4-06A637FAE699}"
-          SQLTask:SqlStatementSource="/* Carga incremental de promociones únicas desde stg.Ventas */" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask" />
+          SQLTask:Connection="{D26C29E9-C5B4-4B91-B79E-FD442632182C}"
+          SQLTask:SqlStatementSource="/* Carga incremental de promociones únicas desde stg.Ventas */&#xA;INSERT INTO dw.DimPromociones (PromotionName, DiscountPercent)&#xA;SELECT DISTINCT&#xA;    ISNULL(PromotionName, 'SIN PROMOCION'),&#xA;    ISNULL(DiscountPercent, 0)&#xA;FROM stg.Ventas s&#xA;WHERE NOT EXISTS (&#xA;    SELECT 1&#xA;    FROM dw.DimPromociones d&#xA;    WHERE ISNULL(d.PromotionName,'SIN PROMOCION') = ISNULL(s.PromotionName,'SIN PROMOCION')&#xA;      AND ISNULL(d.DiscountPercent,0) = ISNULL(s.DiscountPercent,0)&#xA;);&#xA;" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask" />
       </DTS:ObjectData>
     </DTS:Executable>
     <DTS:Executable
@@ -61,8 +61,8 @@
       <DTS:Variables />
       <DTS:ObjectData>
         <SQLTask:SqlTaskData
-          SQLTask:Connection="{C9EB955B-5D91-4215-AFB4-06A637FAE699}"
-          SQLTask:SqlStatementSource="-- Crear secuencia para PromotionSK si no existe" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask" />
+          SQLTask:Connection="{D26C29E9-C5B4-4B91-B79E-FD442632182C}"
+          SQLTask:SqlStatementSource="-- Crear secuencia para PromotionSK si no existe&#xA;IF OBJECT_ID('dw.SeqPromotionSK','SO') IS NULL&#xA;    CREATE SEQUENCE dw.SeqPromotionSK AS BIGINT START WITH 1 INCREMENT BY 1;&#xA;&#xA;-- Agregar default constraint si no existe&#xA;IF NOT EXISTS (&#xA;  SELECT 1&#xA;  FROM sys.default_constraints dc&#xA;  JOIN sys.columns c&#xA;    ON c.object_id = OBJECT_ID('dw.DimPromociones') AND c.column_id = dc.parent_column_id&#xA;  WHERE c.name = 'PromotionSK'&#xA;)&#xA;BEGIN&#xA;  ALTER TABLE dw.DimPromociones&#xA;  ADD CONSTRAINT DF_DimPromociones_SK&#xA;    DEFAULT NEXT VALUE FOR dw.SeqPromotionSK FOR PromotionSK;&#xA;END&#xA;" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask" />
       </DTS:ObjectData>
     </DTS:Executable>
   </DTS:Executables>
@@ -98,30 +98,30 @@
           TopLeft="335.000022047511,57.0000037513676" />
         <EdgeLayout
           Id="Package.PrecedenceConstraints[Restricción]"
-          TopLeft="435.363658411147,98.8909128422769">
+          TopLeft="435.363658411147,98.8909128422767">
           <EdgeLayout.Curve>
             <mssgle:Curve
               StartConnector="{assembly:Null}"
-              EndConnector="248.454562236979,122.109101702499"
+              EndConnector="248.45456223698,122.109101702498"
               Start="0,0"
-              End="248.454562236979,114.609101702499">
+              End="248.45456223698,114.609101702498">
               <mssgle:Curve.Segments>
                 <mssgle:SegmentCollection
                   Capacity="5">
                   <mssgle:LineSegment
-                    End="0,57.0545508512497" />
+                    End="0,57.0545508512492" />
                   <mssgle:CubicBezierSegment
-                    Point1="0,57.0545508512497"
-                    Point2="0,61.0545508512497"
-                    Point3="4,61.0545508512497" />
+                    Point1="0,57.0545508512492"
+                    Point2="0,61.0545508512492"
+                    Point3="4,61.0545508512492" />
                   <mssgle:LineSegment
-                    End="244.454562236979,61.0545508512497" />
+                    End="244.45456223698,61.0545508512492" />
                   <mssgle:CubicBezierSegment
-                    Point1="244.454562236979,61.0545508512497"
-                    Point2="248.454562236979,61.0545508512497"
-                    Point3="248.454562236979,65.0545508512497" />
+                    Point1="244.45456223698,61.0545508512492"
+                    Point2="248.45456223698,61.0545508512492"
+                    Point3="248.45456223698,65.0545508512492" />
                   <mssgle:LineSegment
-                    End="248.454562236979,114.609101702499" />
+                    End="248.45456223698,114.609101702498" />
                 </mssgle:SegmentCollection>
               </mssgle:Curve.Segments>
             </mssgle:Curve>

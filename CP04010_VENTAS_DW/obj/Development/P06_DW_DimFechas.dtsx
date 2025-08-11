@@ -11,25 +11,64 @@
   DTS:LocaleID="17418"
   DTS:ObjectName="Package1"
   DTS:PackageType="5"
-  DTS:VersionBuild="2"
-  DTS:VersionGUID="{B4080363-090A-4644-956C-3D637728215B}">
+  DTS:VersionBuild="14"
+  DTS:VersionGUID="{92F226BA-7511-4F9E-A242-26288CC5B3AB}">
   <DTS:Property
     DTS:Name="PackageFormatVersion">8</DTS:Property>
   <DTS:ConnectionManagers>
     <DTS:ConnectionManager
-      DTS:refId="Package.ConnectionManagers[localhost.SalesDW]"
+      DTS:refId="Package.ConnectionManagers[CN_DW]"
       DTS:CreationName="OLEDB"
       DTS:DTSID="{B74DB0C3-A19C-462E-8162-2EEAD4967E08}"
-      DTS:ObjectName="localhost.SalesDW">
+      DTS:ObjectName="CN_DW">
       <DTS:ObjectData>
         <DTS:ConnectionManager
           DTS:ConnectRetryCount="1"
           DTS:ConnectRetryInterval="5"
-          DTS:ConnectionString="Data Source=localhost;Initial Catalog=SalesDW;Provider=SQLNCLI11.1;Integrated Security=SSPI;Application Name=SSIS-Package1-{B74DB0C3-A19C-462E-8162-2EEAD4967E08}localhost.SalesDW;Auto Translate=False;" />
+          DTS:ConnectionString="Data Source=localhost;Initial Catalog=SalesDW;Provider=SQLNCLI11.1;Integrated Security=SSPI;Auto Translate=False;Application Name=SSIS-Package1-{B74DB0C3-A19C-462E-8162-2EEAD4967E08}localhost.SalesDW;" />
       </DTS:ObjectData>
     </DTS:ConnectionManager>
   </DTS:ConnectionManagers>
-  <DTS:Variables />
+  <DTS:PackageParameters>
+    <DTS:PackageParameter
+      DTS:CreationName=""
+      DTS:DataType="7"
+      DTS:DTSID="{4FD9C9C5-D99B-42B7-9933-EA69B3E023BE}"
+      DTS:ObjectName="EndDate">
+      <DTS:Property
+        DTS:DataType="7"
+        DTS:Name="ParameterValue">12/31/2028</DTS:Property>
+    </DTS:PackageParameter>
+    <DTS:PackageParameter
+      DTS:CreationName=""
+      DTS:DataType="7"
+      DTS:DTSID="{DEE1784D-27B8-41CC-8A2E-D5BF80459724}"
+      DTS:ObjectName="StarDate">
+      <DTS:Property
+        DTS:DataType="7"
+        DTS:Name="ParameterValue">1/1/2018</DTS:Property>
+    </DTS:PackageParameter>
+  </DTS:PackageParameters>
+  <DTS:Variables>
+    <DTS:Variable
+      DTS:CreationName=""
+      DTS:DTSID="{0614798B-AF36-4E92-8424-FDCAA52B9D25}"
+      DTS:IncludeInDebugDump="6789"
+      DTS:Namespace="User"
+      DTS:ObjectName="EndDate">
+      <DTS:VariableValue
+        DTS:DataType="7">1/1/2010</DTS:VariableValue>
+    </DTS:Variable>
+    <DTS:Variable
+      DTS:CreationName=""
+      DTS:DTSID="{0DE59D92-30BB-4E4F-86CB-4C157A032525}"
+      DTS:IncludeInDebugDump="6789"
+      DTS:Namespace="User"
+      DTS:ObjectName="StartDate">
+      <DTS:VariableValue
+        DTS:DataType="7">12/31/2035</DTS:VariableValue>
+    </DTS:Variable>
+  </DTS:Variables>
   <DTS:Executables>
     <DTS:Executable
       DTS:refId="Package\Cargar_DimFechas"
@@ -44,19 +83,19 @@
       <DTS:Variables />
       <DTS:ObjectData>
         <SQLTask:SqlTaskData
-          SQLTask:Connection="{1E09F924-02CE-4E7F-ACF4-D9CD1FDC868B}"
-          SQLTask:SqlStatementSource="-- Parámetros del paquete&#xA;DECLARE @StartDate DATE = ?;&#xA;DECLARE @EndDate   DATE = ?;&#xA;&#xA;;WITH d AS (&#xA;  SELECT @StartDate AS [Date]&#xA;  UNION ALL&#xA;  SELECT DATEADD(DAY,1,[Date]) FROM d WHERE [Date] &lt; @EndDate&#xA;)&#xA;INSERT INTO dw.DimFechas(&#xA;  DateKey,[Date],[Year],[Quarter],[Month],MonthName,[Day],DayOfWeek,DayName,IsWeekend&#xA;)&#xA;SELECT&#xA;  CONVERT(INT,FORMAT([Date],'yyyyMMdd')) AS DateKey,&#xA;  [Date]                                         AS [Date],&#xA;  DATEPART(YEAR,[Date])                          AS [Year],&#xA;  DATEPART(QUARTER,[Date])                       AS [Quarter],&#xA;  DATEPART(MONTH,[Date])                         AS [Month],&#xA;  DATENAME(MONTH,[Date])                         AS MonthName,&#xA;  DATEPART(DAY,[Date])                           AS [Day],&#xA;  DATEPART(WEEKDAY,[Date])                       AS DayOfWeek,&#xA;  DATENAME(WEEKDAY,[Date])                       AS DayName,&#xA;  CASE WHEN DATENAME(WEEKDAY,[Date]) IN (N'Saturday',N'Sunday') THEN 1 ELSE 0 END AS IsWeekend&#xA;FROM d&#xA;WHERE NOT EXISTS (&#xA;  SELECT 1 FROM dw.DimFechas f&#xA;  WHERE f.DateKey = CONVERT(INT,FORMAT(d.[Date],'yyyyMMdd'))&#xA;)&#xA;OPTION (MAXRECURSION 0);&#xA;" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask">
+          SQLTask:Connection="{B74DB0C3-A19C-462E-8162-2EEAD4967E08}"
+          SQLTask:SqlStatementSource="DECLARE @StartDate DATETIME, @EndDate DATETIME;&#xA;SET @StartDate = CAST(? AS DATETIME);&#xA;SET @EndDate   = CAST(? AS DATETIME);&#xA;&#xA;;WITH d AS (&#xA;  SELECT CAST(@StartDate AS DATE) AS [Date]&#xA;  UNION ALL&#xA;  SELECT DATEADD(DAY,1,[Date]) FROM d WHERE [Date] &lt; CAST(@EndDate AS DATE)&#xA;)&#xA;INSERT INTO dw.DimFechas(DateKey,[Date],[Year],[Quarter],[Month],MonthName,[Day],DayOfWeek,DayName,IsWeekend)&#xA;SELECT&#xA;  CONVERT(INT, CONVERT(CHAR(8), [Date], 112)),&#xA;  [Date],&#xA;  DATEPART(YEAR,[Date]),&#xA;  DATEPART(QUARTER,[Date]),&#xA;  DATEPART(MONTH,[Date]),&#xA;  DATENAME(MONTH,[Date]),&#xA;  DATEPART(DAY,[Date]),&#xA;  DATEPART(WEEKDAY,[Date]),&#xA;  DATENAME(WEEKDAY,[Date]),&#xA;  CASE WHEN DATENAME(WEEKDAY,[Date]) IN (N'Saturday',N'Sunday') THEN 1 ELSE 0 END&#xA;FROM d&#xA;WHERE NOT EXISTS (SELECT 1 FROM dw.DimFechas f WHERE f.DateKey = CONVERT(INT, CONVERT(CHAR(8), d.[Date], 112)))&#xA;OPTION (MAXRECURSION 0);&#xA;" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask">
           <SQLTask:ParameterBinding
             SQLTask:ParameterName="0"
             SQLTask:DtsVariableName="User::StartDate"
             SQLTask:ParameterDirection="Input"
-            SQLTask:DataType="135"
+            SQLTask:DataType="7"
             SQLTask:ParameterSize="-1" />
           <SQLTask:ParameterBinding
             SQLTask:ParameterName="1"
             SQLTask:DtsVariableName="User::EndDate"
             SQLTask:ParameterDirection="Input"
-            SQLTask:DataType="135"
+            SQLTask:DataType="7"
             SQLTask:ParameterSize="-1" />
         </SQLTask:SqlTaskData>
       </DTS:ObjectData>
@@ -77,7 +116,7 @@
         <NodeLayout
           Size="162.327272727273,41.8909090909091"
           Id="Package\Cargar_DimFechas"
-          TopLeft="607.000039948774,131.000008621564" />
+          TopLeft="363.000023890288,96.0000063180927" />
       </GraphLayout>
     </LayoutInfo>
   </Package>

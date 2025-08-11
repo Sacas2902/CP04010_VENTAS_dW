@@ -11,8 +11,8 @@
   DTS:LocaleID="17418"
   DTS:ObjectName="Package1"
   DTS:PackageType="5"
-  DTS:VersionBuild="2"
-  DTS:VersionGUID="{D5447C99-F13A-4257-AE17-ABA373FADB6C}">
+  DTS:VersionBuild="4"
+  DTS:VersionGUID="{7D231CB1-14FD-48FB-A838-452A11BBEA48}">
   <DTS:Property
     DTS:Name="PackageFormatVersion">8</DTS:Property>
   <DTS:ConnectionManagers>
@@ -44,8 +44,8 @@
       <DTS:Variables />
       <DTS:ObjectData>
         <SQLTask:SqlTaskData
-          SQLTask:Connection="{573BD4A0-4478-430B-ACFF-DDFCB95A98E0}"
-          SQLTask:SqlStatementSource="/* Truncar y cargar stg.Estados desde TailspinToys2020-US.dbo.[State] */" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask" />
+          SQLTask:Connection="{A6A12DFA-B476-4251-B875-FC64A3546DD1}"
+          SQLTask:SqlStatementSource="/* Truncar y cargar stg.Estados desde TailspinToys2020-US.dbo.[State] */&#xA;TRUNCATE TABLE stg.Estados;&#xA;&#xA;INSERT INTO stg.Estados (&#xA;  StateID, StateCode, StateName, TimeZone, RegionID&#xA;)&#xA;SELECT&#xA;  s.StateID, s.StateCode, s.StateName, s.TimeZone, s.RegionID&#xA;FROM [TailspinToys2020-US].dbo.[State] AS s;  -- ojo: [State] con corchetes&#xA;" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask" />
       </DTS:ObjectData>
     </DTS:Executable>
   </DTS:Executables>

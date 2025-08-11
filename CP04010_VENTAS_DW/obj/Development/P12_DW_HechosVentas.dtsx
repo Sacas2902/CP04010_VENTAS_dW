@@ -11,8 +11,8 @@
   DTS:LocaleID="17418"
   DTS:ObjectName="Package1"
   DTS:PackageType="5"
-  DTS:VersionBuild="3"
-  DTS:VersionGUID="{37F9527C-6C7E-43A7-BF62-4192C0E68F10}">
+  DTS:VersionBuild="12"
+  DTS:VersionGUID="{B095707A-7DD4-4E2E-A013-9E8D2FB10573}">
   <DTS:Property
     DTS:Name="PackageFormatVersion">8</DTS:Property>
   <DTS:ConnectionManagers>
@@ -44,8 +44,8 @@
       <DTS:Variables />
       <DTS:ObjectData>
         <SQLTask:SqlTaskData
-          SQLTask:Connection="{EFFC0E22-C95D-4AC5-B234-BF13D24226B7}"
-          SQLTask:SqlStatementSource="/* Insertar nuevos pedidos en la dimensión degenerada */" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask" />
+          SQLTask:Connection="{1C3352B5-730E-4A0C-90A5-7E1090D78925}"
+          SQLTask:SqlStatementSource="/* Insertar nuevos pedidos en la dimensión degenerada */&#xA;INSERT INTO dw.DimPedidos (OrderNumber)&#xA;SELECT DISTINCT s.OrderNumber&#xA;FROM stg.Ventas s&#xA;WHERE NOT EXISTS (&#xA;  SELECT 1 FROM dw.DimPedidos d WHERE d.OrderNumber = s.OrderNumber&#xA;);&#xA;" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask" />
       </DTS:ObjectData>
     </DTS:Executable>
     <DTS:Executable
@@ -61,8 +61,8 @@
       <DTS:Variables />
       <DTS:ObjectData>
         <SQLTask:SqlTaskData
-          SQLTask:Connection="{EFFC0E22-C95D-4AC5-B234-BF13D24226B7}"
-          SQLTask:SqlStatementSource="/* Cargar Hechos de Ventas resolviendo SKs y fechas */" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask" />
+          SQLTask:Connection="{1C3352B5-730E-4A0C-90A5-7E1090D78925}"
+          SQLTask:SqlStatementSource="/* ===== Carga de hechos sin NULLs en FKs ===== */&#xA;&#xA;DECLARE @PromotionSK     BIGINT = (SELECT TOP 1 PromotionSK   FROM dw.DimPromociones   WHERE PromotionCode = N'SIN PROMOCION' AND IsCurrent = 1);&#xA;DECLARE @StateUnknownSK  BIGINT = (SELECT TOP 1 StateSK       FROM dw.DimEstados       WHERE StateID       = -1               AND IsCurrent = 1);&#xA;DECLARE @OfficeUnknownSK BIGINT = (SELECT TOP 1 SalesOfficeSK FROM dw.DimOficinasVentas WHERE SalesOfficeID = -1               AND IsCurrent = 1);&#xA;&#xA;INSERT INTO dw.HechosVentas&#xA;(&#xA;  OrderNumber,&#xA;  OrderDateKey,&#xA;  ShipDateKey,&#xA;  ProductSK,&#xA;  StateSK,&#xA;  SalesOfficeSK,&#xA;  PromotionSK,&#xA;  Quantity,&#xA;  UnitPrice,&#xA;  DiscountAmount&#xA;)&#xA;SELECT&#xA;  s.OrderNumber,&#xA;  CONVERT(INT, CONVERT(CHAR(8), s.OrderDate, 112)) AS OrderDateKey,&#xA;  CASE WHEN s.ShipDate IS NULL THEN NULL&#xA;       ELSE CONVERT(INT, CONVERT(CHAR(8), s.ShipDate, 112)) END AS ShipDateKey,&#xA;&#xA;  dp.ProductSK,                                                   -- obligatorio&#xA;  COALESCE(de.StateSK,        @StateUnknownSK)        AS StateSK, -- sin NULL&#xA;  COALESCE(ofc.SalesOfficeSK, @OfficeUnknownSK)       AS SalesOfficeSK, -- sin NULL&#xA;  @PromotionSK,                                                  -- sin NULL&#xA;&#xA;  s.Quantity,&#xA;  s.UnitPrice,&#xA;  ISNULL(s.DiscountAmount, 0)&#xA;FROM stg.Ventas s&#xA;JOIN dw.DimProductos dp&#xA;  ON dp.ProductID = s.ProductID AND dp.IsCurrent = 1&#xA;LEFT JOIN dw.DimEstados de&#xA;  ON de.StateID = s.CustomerStateID AND de.IsCurrent = 1&#xA;OUTER APPLY (&#xA;  SELECT TOP 1 o.SalesOfficeSK&#xA;  FROM dw.DimOficinasVentas o&#xA;  WHERE o.StateSK = COALESCE(de.StateSK, @StateUnknownSK) AND o.IsCurrent = 1&#xA;  ORDER BY o.SalesOfficeID&#xA;) ofc&#xA;WHERE EXISTS (&#xA;  SELECT 1 FROM dw.DimFechas f&#xA;  WHERE f.DateKey = CONVERT(INT, CONVERT(CHAR(8), s.OrderDate, 112))&#xA;);&#xA;" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask" />
       </DTS:ObjectData>
     </DTS:Executable>
   </DTS:Executables>
@@ -102,26 +102,26 @@
           <EdgeLayout.Curve>
             <mssgle:Curve
               StartConnector="{assembly:Null}"
-              EndConnector="262.236380550424,105.10910058367"
+              EndConnector="262.236380550425,105.109100583671"
               Start="0,0"
-              End="262.236380550424,97.60910058367">
+              End="262.236380550425,97.609100583671">
               <mssgle:Curve.Segments>
                 <mssgle:SegmentCollection
                   Capacity="5">
                   <mssgle:LineSegment
-                    End="0,48.5545502918352" />
+                    End="0,48.5545502918355" />
                   <mssgle:CubicBezierSegment
-                    Point1="0,48.5545502918352"
-                    Point2="0,52.5545502918352"
-                    Point3="4,52.5545502918352" />
+                    Point1="0,48.5545502918355"
+                    Point2="0,52.5545502918355"
+                    Point3="4,52.5545502918355" />
                   <mssgle:LineSegment
-                    End="258.236380550424,52.5545502918352" />
+                    End="258.236380550425,52.5545502918355" />
                   <mssgle:CubicBezierSegment
-                    Point1="258.236380550424,52.5545502918352"
-                    Point2="262.236380550424,52.5545502918352"
-                    Point3="262.236380550424,56.5545502918352" />
+                    Point1="258.236380550425,52.5545502918355"
+                    Point2="262.236380550425,52.5545502918355"
+                    Point3="262.236380550425,56.5545502918355" />
                   <mssgle:LineSegment
-                    End="262.236380550424,97.60910058367" />
+                    End="262.236380550425,97.609100583671" />
                 </mssgle:SegmentCollection>
               </mssgle:Curve.Segments>
             </mssgle:Curve>

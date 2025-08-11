@@ -11,16 +11,16 @@
   DTS:LocaleID="17418"
   DTS:ObjectName="P01_Cargar_Staging_Productos"
   DTS:PackageType="5"
-  DTS:VersionBuild="5"
-  DTS:VersionGUID="{EF5041D1-075B-4E3C-8732-F4D367E7B8E9}">
+  DTS:VersionBuild="6"
+  DTS:VersionGUID="{AB7A817F-0BE1-493D-9C6B-75B57DB01790}">
   <DTS:Property
     DTS:Name="PackageFormatVersion">8</DTS:Property>
   <DTS:ConnectionManagers>
     <DTS:ConnectionManager
-      DTS:refId="Package.ConnectionManagers[localhost.SalesDW]"
+      DTS:refId="Package.ConnectionManagers[CN_DW]"
       DTS:CreationName="OLEDB"
       DTS:DTSID="{00E9A77E-85EC-4F11-8B4E-1B6428F3EE71}"
-      DTS:ObjectName="localhost.SalesDW">
+      DTS:ObjectName="CN_DW">
       <DTS:ObjectData>
         <DTS:ConnectionManager
           DTS:ConnectRetryCount="1"
