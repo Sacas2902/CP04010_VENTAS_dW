@@ -11,8 +11,8 @@
   DTS:LocaleID="17418"
   DTS:ObjectName="P00_Maestro_CargaCompleta"
   DTS:PackageType="5"
-  DTS:VersionBuild="18"
-  DTS:VersionGUID="{9B580984-CBD9-4CC5-BBB6-ACC5984DD0EC}">
+  DTS:VersionBuild="19"
+  DTS:VersionGUID="{68258A74-314C-46F9-B0CE-ED1ECC3656FC}">
   <DTS:Property
     DTS:Name="PackageFormatVersion">8</DTS:Property>
   <DTS:ConnectionManagers>

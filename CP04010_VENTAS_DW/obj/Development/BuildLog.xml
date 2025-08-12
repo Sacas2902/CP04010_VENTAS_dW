@@ -8,7 +8,7 @@
   <LastBuildInfos>
     <ProjectBuildItemInfo>
       <Name>P01_Cargar_Staging_Productos.dtsx</Name>
-      <LastWriteTime>2025-08-11T00:05:30.6750016Z</LastWriteTime>
+      <LastWriteTime>2025-08-12T03:25:45.6628426Z</LastWriteTime>
       <LastKnownProtectionLevel>EncryptSensitiveWithUserKey</LastKnownProtectionLevel>
     </ProjectBuildItemInfo>
     <ProjectBuildItemInfo>
@@ -48,7 +48,7 @@
     </ProjectBuildItemInfo>
     <ProjectBuildItemInfo>
       <Name>P09_DW_DimProductos.dtsx</Name>
-      <LastWriteTime>2025-08-11T01:18:02.7952293Z</LastWriteTime>
+      <LastWriteTime>2025-08-12T03:25:44.7951379Z</LastWriteTime>
       <LastKnownProtectionLevel>EncryptSensitiveWithUserKey</LastKnownProtectionLevel>
     </ProjectBuildItemInfo>
     <ProjectBuildItemInfo>
@@ -63,7 +63,7 @@
     </ProjectBuildItemInfo>
     <ProjectBuildItemInfo>
       <Name>P00_Maestro_CargaCompleta..dtsx</Name>
-      <LastWriteTime>2025-08-11T03:16:02.4974845Z</LastWriteTime>
+      <LastWriteTime>2025-08-12T03:25:46.5906681Z</LastWriteTime>
       <LastKnownProtectionLevel>EncryptSensitiveWithUserKey</LastKnownProtectionLevel>
     </ProjectBuildItemInfo>
   </LastBuildInfos>

@@ -11,8 +11,8 @@
   DTS:LocaleID="17418"
   DTS:ObjectName="P01_Cargar_Staging_Productos"
   DTS:PackageType="5"
-  DTS:VersionBuild="6"
-  DTS:VersionGUID="{AB7A817F-0BE1-493D-9C6B-75B57DB01790}">
+  DTS:VersionBuild="7"
+  DTS:VersionGUID="{3E6A0C77-65A7-4622-B146-25B9300F2903}">
   <DTS:Property
     DTS:Name="PackageFormatVersion">8</DTS:Property>
   <DTS:ConnectionManagers>
